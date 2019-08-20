@@ -17,8 +17,6 @@
             }
             function getRating() {
                 // establishmentName, latitude, longitude
-                console.log(latitude)
-                console.log(longitude)
                 var request = new XMLHttpRequest()
                 var establishmentName = document.getElementById('establishmentName').value
                 request.open('GET', 'http://api.ratings.food.gov.uk/Establishments?name=' + establishmentName + '&latitude=' + latitude + '&longitude=' + longitude + '&maxDistanceLimit=1', true)
@@ -26,7 +24,6 @@
                 request.onload = function() {
                     if (request.status >= 200 && request.status < 400) {
                         var data = JSON.parse(this.response)
-                        console.log(data.meta.itemCount)
                         if (data.meta.itemCount >= 1 ) {
                             var rating = data.establishments[0].RatingValue
                             var ratingDate = data.establishments[0].RatingDate
@@ -63,8 +60,23 @@
                     <input type="text" id="establishmentName" name="establishmentName" placeholder="Establishment Name" class="input-xlarge" >
                 </div>  
                 <br>
-                <button class="btn-large" type="button" onclick="getRating();">Get Rating</button>
+                <button id="getRating" class="btn-large" type="button" onclick="getRating();">Get Rating</button>
                 <br>
+                <script>
+                            // Get the input field
+                    var input = document.getElementById("establishmentName");
+
+                    // Execute a function when the user releases a key on the keyboard
+                    input.addEventListener("keyup", function(event) {
+                    // Number 13 is the "Enter" key on the keyboard
+                    if (event.keyCode === 13) {
+                        // Cancel the default action, if needed
+                        event.preventDefault();
+                        // Trigger the button element with a click
+                        document.getElementById("getRating").click();
+                    }
+                    });
+                </script>
                 <div id="result">
                 </div>
         </center>
