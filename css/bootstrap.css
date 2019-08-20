@@ -1298,7 +1298,7 @@ textarea::-webkit-input-placeholder {
 }
 
 .input-xlarge {
-  width: 270px;
+  width: 400px;
 }
 
 .input-xxlarge {
@@ -6166,4 +6166,11 @@ a.badge:focus {
 
 .affix {
   position: fixed;
+}
+
+#footer {
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:60px;   /* Height of the footer */
 }
