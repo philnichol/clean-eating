@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Clean Eating</title>
+    <script>
+            function getPosition(){
+                if(navigator.geolocation){
+                    position = navigator.geolocation.getCurrentPosition
+                    navigator.geolocation.getCurrentPosition(function(position){
+                        window.latitude = position.coords.latitude
+                        window.longitude = position.coords.longitude
+                        //document.getElementById("result").innerHTML = positionInfo;
+                    })
+                } else{
+                    alert("Sorry, your browser does not support HTML5 geolocation.");
+                }
+            }
+            function getRating() {
+                // establishmentName, latitude, longitude
+                console.log(latitude)
+                console.log(longitude)
+                var request = new XMLHttpRequest()
+                var establishmentName = document.getElementById('establishmentName').value
+                request.open('GET', 'http://api.ratings.food.gov.uk/Establishments?name=' + establishmentName + '&latitude=' + latitude + '&longitude=' + longitude + '&maxDistanceLimit=1', true)
+                request.setRequestHeader('x-api-version', '2')
+                request.onload = function() {
+                    if (request.status >= 200 && request.status < 400) {
+                        var data = JSON.parse(this.response)
+                        console.log(data.meta.itemCount)
+                        if (data.meta.itemCount >= 1 ) {
+                            var rating = data.establishments[0].RatingValue
+                            var ratingDate = data.establishments[0].RatingDate
+                            var businessName = data.establishments[0].BusinessName
+                            var address1 = data.establishments[0].AddressLine1
+                            var address2 = data.establishments[0].AddressLine2
+                            var address3 = data.establishments[0].AddressLine3
+                            document.getElementById("result").innerHTML = "<br>Rating: " + rating + 
+                                "<br>Rating Date: " + ratingDate + 
+                                "<br>Business Name:" + businessName + 
+                                "<br>Address line 1: " + address1 +
+                                "<br>Address line 2: " + address2 + 
+                                "<br>Address line 3: " + address3;
+                        } else {
+                            alert("Sorry, we couldn't find that establishment");
+                        }
+                    }
+                }
+                request.send()
+            }
+            window.onload = getPosition;
+        </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.css" rel="stylesheet" media="screen">
+  </head>
+  <body>
+        <center>
+                <h1>Clean Eating</h1>
+                <h4>
+                    Check the food hygiene rating for the establishment you're in
+                </h3>
+                <div id=textbox>
+                    <input type="text" id="establishmentName" name="establishmentName" placeholder="Establishment Name" class="input-xlarge" >
+                </div>  
+                <br>
+                <button class="btn-large" type="button" onclick="getRating();">Get Rating</button>
+                <br>
+                <div id="result">
+                </div>
+        </center>
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>
