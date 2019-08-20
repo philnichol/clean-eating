@@ -4,18 +4,19 @@
     <title>Clean Eating</title>
     <script>
             function getPosition(){
+                // Gets your current position
                 if(navigator.geolocation){
                     position = navigator.geolocation.getCurrentPosition
                     navigator.geolocation.getCurrentPosition(function(position){
                         window.latitude = position.coords.latitude
                         window.longitude = position.coords.longitude
-                        //document.getElementById("result").innerHTML = positionInfo;
                     })
                 } else{
                     alert("Sorry, your browser does not support HTML5 geolocation.");
                 }
             }
             function distance(lat1, lon1, lat2, lon2, unit) {
+                // gets distance between you and the establishment
                 if ((lat1 == lat2) && (lon1 == lon2)) {
                     return 0;
                 }
@@ -36,8 +37,10 @@
                     return dist;
                 }
             }
+            function showDiv() {
+                document.getElementById('textbox').style.display = "block";
+            }
             function getRating() {
-                // establishmentName, latitude, longitude
                 var request = new XMLHttpRequest()
                 var establishmentName = document.getElementById('establishmentName').value
                 request.open('GET', 'https://api.ratings.food.gov.uk/Establishments?name=' + establishmentName + '&latitude=' + latitude + '&longitude=' + longitude + '&maxDistanceLimit=1', true)
@@ -72,6 +75,7 @@
                     }
                 }
                 request.send()
+                showDiv()
             }
             window.onload = getPosition;
         </script>
@@ -84,13 +88,19 @@
                 <h1>Clean Eating</h1>
                 <h4>
                     Check the food hygiene rating for the establishment you're in
-                </h3>
-                <div id=textbox>
-                    <input type="text" id="establishmentName" name="establishmentName" placeholder="Establishment Name, leave blank to get closest estabishment" class="input-xlarge" autofocus="autofocus">
-                </div>  
-                <br>
+                </h4>
+                <h5>
+                    Press the button to get the rating of your current location
+                </h5>
                 <button id="getRating" class="btn-large" type="button" onclick="getRating();">Get Rating</button>
                 <br>
+                <div id="result"></div>
+                <div id=textbox style="display:none;">
+                    <br><br>
+                    If the above was incorrect, please enter the name of the establishment you are looking up:
+                    <br><br>
+                    <input type="text" id="establishmentName" name="establishmentName" placeholder="Establishment Name" class="input-xlarge" autofocus="autofocus">
+                </div>  
                 <script>
                             // Get the input field
                     var input = document.getElementById("establishmentName");
