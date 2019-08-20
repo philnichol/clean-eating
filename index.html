@@ -3,82 +3,89 @@
   <head>
     <title>Clean Eating</title>
     <script>
-            function getPosition(){
-                // Gets your current position
-                if(navigator.geolocation){
-                    position = navigator.geolocation.getCurrentPosition
-                    navigator.geolocation.getCurrentPosition(function(position){
-                        window.latitude = position.coords.latitude
-                        window.longitude = position.coords.longitude
-                    })
-                } else{
-                    alert("Sorry, your browser does not support HTML5 geolocation.");
-                }
+        function waitForElement() {
+            if(typeof latitude == "undefined"){
+                setTimeout(waitForElement, 250);
+            } else {
+                getRating();
             }
-            function distance(lat1, lon1, lat2, lon2, unit) {
-                // gets distance between you and the establishment
-                if ((lat1 == lat2) && (lon1 == lon2)) {
-                    return 0;
-                }
-                else {
-                    var radlat1 = Math.PI * lat1/180;
-                    var radlat2 = Math.PI * lat2/180;
-                    var theta = lon1-lon2;
-                    var radtheta = Math.PI * theta/180;
-                    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-                    if (dist > 1) {
-                        dist = 1;
-                    }
-                    dist = Math.acos(dist);
-                    dist = dist * 180/Math.PI;
-                    dist = dist * 60 * 1.1515;
-                    if (unit=="K") { dist = dist * 1.609344 }
-                    if (unit=="N") { dist = dist * 0.8684 }
-                    return dist;
-                }
+        }
+        function getPosition() {
+            // Gets your current position
+            if(navigator.geolocation){
+                position = navigator.geolocation.getCurrentPosition
+                navigator.geolocation.getCurrentPosition(function(position){
+                    window.latitude = position.coords.latitude
+                    window.longitude = position.coords.longitude
+                })
+            } else{
+                alert("Sorry, your browser does not support HTML5 geolocation.");
             }
-            function showDiv() {
-                document.getElementById('textbox').style.display = "block";
+        }
+        function distance(lat1, lon1, lat2, lon2, unit) {
+            // gets distance between you and the establishment
+            if ((lat1 == lat2) && (lon1 == lon2)) {
+                return 0;
             }
-            function getRating() {
-                var request = new XMLHttpRequest()
-                var establishmentName = document.getElementById('establishmentName').value
-                request.open('GET', 'https://api.ratings.food.gov.uk/Establishments?name=' + establishmentName + '&latitude=' + latitude + '&longitude=' + longitude + '&maxDistanceLimit=1', true)
-                request.setRequestHeader('x-api-version', '2')
-                request.onload = function() {
-                    if (request.status >= 200 && request.status < 400) {
-                        var data = JSON.parse(this.response)
-                        if (data.meta.itemCount >= 1 ) {
-                            var results = [];
-                            for (i = 0; i < data.meta.itemCount; i++) {
-                                var establishmentLatitude = data.establishments[i].geocode.latitude
-                                var establishmentLongitude = data.establishments[i].geocode.longitude
-                                results.push(distance(latitude, longitude, establishmentLatitude, establishmentLongitude))
-                            }
-                            const closest = Math.min.apply(Math, results)
-                            closestMatch = data.establishments[results.indexOf(closest)];
-                            var rating = closestMatch.RatingValue
-                            var ratingDate = closestMatch.RatingDate
-                            var businessName = closestMatch.BusinessName
-                            var address1 = closestMatch.AddressLine1
-                            var address2 = closestMatch.AddressLine2
-                            var address3 = closestMatch.AddressLine3
-                            document.getElementById("result").innerHTML = "<br><b>Rating: " + rating + "/5</b>" +
-                                "<br>Rating Date: " + ratingDate + 
-                                "<br>Business Name:" + businessName + 
-                                "<br>Address line 1: " + address1 +
-                                "<br>Address line 2: " + address2 + 
-                                "<br>Address line 3: " + address3;
-                        } else {
-                            alert("Sorry, we couldn't find that establishment");
+            else {
+                var radlat1 = Math.PI * lat1/180;
+                var radlat2 = Math.PI * lat2/180;
+                var theta = lon1-lon2;
+                var radtheta = Math.PI * theta/180;
+                var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+                if (dist > 1) {
+                    dist = 1;
+                }
+                dist = Math.acos(dist);
+                dist = dist * 180/Math.PI;
+                dist = dist * 60 * 1.1515;
+                if (unit=="K") { dist = dist * 1.609344 }
+                if (unit=="N") { dist = dist * 0.8684 }
+                return dist;
+            }
+        }
+        function showDiv() {
+            document.getElementById('textbox').style.display = "block";
+        }
+        function getRating() {
+            var request = new XMLHttpRequest()
+            var establishmentName = document.getElementById('establishmentName').value
+            request.open('GET', 'https://api.ratings.food.gov.uk/Establishments?name=' + establishmentName + '&latitude=' + latitude + '&longitude=' + longitude + '&maxDistanceLimit=1', true)
+            request.setRequestHeader('x-api-version', '2')
+            request.onload = function() {
+                if (request.status >= 200 && request.status < 400) {
+                    var data = JSON.parse(this.response)
+                    if (data.meta.itemCount >= 1 ) {
+                        var results = [];
+                        for (i = 0; i < data.meta.itemCount; i++) {
+                            var establishmentLatitude = data.establishments[i].geocode.latitude
+                            var establishmentLongitude = data.establishments[i].geocode.longitude
+                            results.push(distance(latitude, longitude, establishmentLatitude, establishmentLongitude))
                         }
+                        const closest = Math.min.apply(Math, results)
+                        closestMatch = data.establishments[results.indexOf(closest)];
+                        var rating = closestMatch.RatingValue
+                        var ratingDate = closestMatch.RatingDate
+                        var businessName = closestMatch.BusinessName
+                        var address1 = closestMatch.AddressLine1
+                        var address2 = closestMatch.AddressLine2
+                        var address3 = closestMatch.AddressLine3
+                        document.getElementById("result").innerHTML = "<br><b>Rating: " + rating + "/5</b>" +
+                            "<br>Rating Date: " + ratingDate + 
+                            "<br>Business Name:" + businessName + 
+                            "<br>Address line 1: " + address1 +
+                            "<br>Address line 2: " + address2 + 
+                            "<br>Address line 3: " + address3;
+                    } else {
+                        alert("Sorry, we couldn't find that establishment");
                     }
                 }
-                request.send()
-                showDiv()
             }
-            window.onload = getPosition;
-        </script>
+            request.send()
+            showDiv()
+        }
+        window.onload = getPosition;
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     <link href="css/bootstrap.css" rel="stylesheet" media="screen">
@@ -92,7 +99,7 @@
                 <h5>
                     Press the button to get the rating of your current location
                 </h5>
-                <button id="getRating" class="btn-large" type="button" onclick="getRating();">Get Rating</button>
+                <button id="getRating" class="btn-large" type="button" onclick="waitForElement();">Get Rating</button>
                 <br>
                 <div id="result"></div>
                 <div id=textbox style="display:none;">
