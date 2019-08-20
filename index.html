@@ -31,7 +31,7 @@
                             var address1 = data.establishments[0].AddressLine1
                             var address2 = data.establishments[0].AddressLine2
                             var address3 = data.establishments[0].AddressLine3
-                            document.getElementById("result").innerHTML = "<br>Rating: " + rating + 
+                            document.getElementById("result").innerHTML = "<br><b>Rating: " + rating + "/5</b>" +
                                 "<br>Rating Date: " + ratingDate + 
                                 "<br>Business Name:" + businessName + 
                                 "<br>Address line 1: " + address1 +
@@ -57,7 +57,7 @@
                     Check the food hygiene rating for the establishment you're in
                 </h3>
                 <div id=textbox>
-                    <input type="text" id="establishmentName" name="establishmentName" placeholder="Establishment Name" class="input-xlarge" >
+                    <input type="text" id="establishmentName" name="establishmentName" placeholder="Establishment Name" class="input-xlarge" autofocus="autofocus">
                 </div>  
                 <br>
                 <button id="getRating" class="btn-large" type="button" onclick="getRating();">Get Rating</button>
